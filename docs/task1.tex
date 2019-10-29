@@ -14,9 +14,9 @@
 		\vspace{1.5cm}
 		{\huge\bfseries Verteilte Systeme Master Labor\par}
 		\vspace{2cm}
-		{\Large\itshape Pol Zeimet (65834) \\zepo1012@hs-karlsruhe.de\par}
+		{\Large\itshape Pol Zeimet (65834) \\\href{mailto:zepo1012@hs-karlsruhe.de}{zepo1012@hs-karlsruhe.de}\par}
 		\vfill
-		{\Large\itshape Yannick Stephan (65934) \\stya1012@hs-karlsruhe.de\par}
+		{\Large\itshape Yannick Stephan (65934) \\\href{mailto:stya1012@hs-karlsruhe.de}{stya1012@hs-karlsruhe.de}\par}
 		\vfill
 		\large Aufgabe 1
 		
@@ -47,11 +47,14 @@
 	Die Tatsächlichen Datenbankzugriffe werden dabei nicht durch den Manager selber, sondern durch ein Data Access Objekt, kurz DAO durchgeführt.
 	\subsection{Objekte}
 	Der allgemeine Aufbau des Quellcodes sowie die Abhängigkeiten der verschiedenen Objekte lassen sich gut anhand eines UML Diagrammes darstellen. Der Übersicht halber werden wir uns eine einzelne Aktion ansehen, da alle Aktionen die gleiche Struktur verfolgen.\\
-	So haben wir unsere Aktionsklasse, welche über eine execute() Funktion die Businesslogik des Models aufruft. Eine Aktionsklassen ist hierbei eine Erweiterte \textit{Actionsupport} Klasse, Manager Klassen implementieren ein ihrer Rolle entsprechendes Manager Interface. Da es in diesem Fall um das hinzufügen einer neuen Kategorie geht, sind die Aktions- sowie die Manager-Klasse mit der Kategorie-Klasse verknüpft. Die Validierung der Eingabe übernimmt ebenfalls die Aktionsklasse.
-	Das ablegen der Kategorie in, sowie das Laden der aktualisierten Kategorie-Liste aus der Datenbank erfolgen über ein Data Access Objekt. Dieses baut auf einem HybernateDAO auf. Jedes Objekt, das in die Datenbank abgespeichert werden soll, verfügt über ein eigenes DAO. Hybernate erlaubt es uns hierbei, sogenannte "`POJOs"', "`Plain old Java objects"', also normale Java Objekte über Annotationen als Tabellen anzulegen und mit den entsprechenden Objekt-Variablen zu füllen.
-	\begin{center}
-%		\includegraphics[scale=0.3]{$TODO$}
-	\end{center}
+	So haben wir unsere Aktionsklasse, welche über eine execute() Funktion die Businesslogik des Models aufruft. Eine Aktionsklassen ist hierbei eine Erweiterte \textit{Actionsupport} Klasse, Manager Klassen implementieren ein ihrer Rolle entsprechendes Manager Interface. Da es in diesem Fall um das Hinzufügen einer neuen Kategorie geht, sind die Aktions- sowie die Manager-Klasse mit der Kategorieklasse verknüpft. Die Validierung der Eingabe übernimmt ebenfalls die Aktionsklasse.
+	Das Ablegen der Kategorie in, sowie das Laden der aktualisierten Kategorieliste aus der Datenbank erfolgen über ein Data Access Objekt. Dieses baut auf einem HybernateDAO auf. Jedes Objekt, das in die Datenbank abgespeichert werden soll, verfügt über ein eigenes DAO. Hybernate erlaubt es uns hierbei, sogenannte "`POJOs"', "`Plain old Java objects"', also normale Java Objekte über Annotationen als Tabellen anzulegen und mit den entsprechenden Objekt-Variablen zu füllen. Der Aufbau der eigentlichen Datenbank ist in Abbildung \ref{fig:DB_schema} zu sehen.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=0.5]{diagrams/db_schema.jpg}
+		\caption{Datenbankschema des Web-Shops}
+		\label{fig:DB_schema}
+	\end{figure}
 
 	
 	\section{Ablauf}
@@ -62,6 +65,12 @@
 		\centering
 		\includegraphics[scale=0.5]{diagrams/RegisterUser_activity.jpg}
 		\caption{Aktivitätsdiagramm für das Registrieren eines neuen Benutzers}
+	\end{figure}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=0.5]{diagrams/LoginAction_activity.jpg}
+		\caption{Aktivitätsdiagramm für den Login}
 	\end{figure}
 	
 	\subsection{Anlegen und Löschen Kategorien}
@@ -97,6 +106,10 @@
 	\end{figure}
 	
 	\subsection{Nach Produkten suchen}
-	TODO ...
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=0.7]{diagrams/SearchAction_sequenz.jpg}
+		\caption{Sequenzdiagramm der \textit{SearchAction}}
+	\end{figure}
 	
 \end{document}
