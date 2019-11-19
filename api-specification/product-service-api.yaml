@@ -1,16 +1,7 @@
 openapi: 3.0.0
 info:
   title: Product Service API
-  description: This is a simple API
-  contact:
-    email: you@your-company.com
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
-servers:
-- url: https://virtserver.swaggerhub.com/Nut/category-service-api/1.0.0
-  description: SwaggerHub API Auto Mocking
 tags:
 - name: products
   description: Everything about products
@@ -38,14 +29,30 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/body'
+              required:
+              - categoryId
+              - details
+              - price
+              - productName
+              type: object
+              properties:
+                productName:
+                  type: string
+                price:
+                  type: number
+                categoryId:
+                  type: integer
+                details:
+                  type: string
       responses:
         201:
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_201'
+                properties:
+                  productId:
+                    type: integer
   /products/{id}:
     get:
       tags:
@@ -76,7 +83,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/body_1'
+              required:
+              - searchDescription
+              - searchMaxPrice
+              - searchMinPrice
+              type: object
+              properties:
+                searchDescription:
+                  type: string
+                searchMinPrice:
+                  type: number
+                searchMaxPrice:
+                  type: number
       responses:
         200:
           description: Products
@@ -103,36 +121,3 @@ components:
           format: int64
         details:
           type: string
-    body:
-      required:
-      - categoryId
-      - details
-      - price
-      - productName
-      type: object
-      properties:
-        productName:
-          type: string
-        price:
-          type: number
-        categoryId:
-          type: integer
-        details:
-          type: string
-    inline_response_201:
-      properties:
-        productId:
-          type: integer
-    body_1:
-      required:
-      - searchDescription
-      - searchMaxPrice
-      - searchMinPrice
-      type: object
-      properties:
-        searchDescription:
-          type: string
-        searchMinPrice:
-          type: number
-        searchMaxPrice:
-          type: number

@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: "1.0.0-oas3"
+  version: "1.0.0"
   title: WebShop API
 tags:
   - name: categories
@@ -85,25 +85,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-  # /categories/name/{name}:
-  #   get:
-  #     tags:
-  #       - categories
-  #     summary: Get a category by name
-  #     parameters:
-  #       - in: path
-  #         name: name
-  #         required: true
-  #         description: Category name
-  #         schema:
-  #           type: string
-  #     responses:
-  #       '200':
-  #         description: Category by name
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/Category'
   /products:
     get:
       tags:
@@ -298,22 +279,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Role'
-servers:
-  - url: 'https://virtserver.swaggerhub.com/Nut/WebShopAPI/1.0.0'
 components:
-  securitySchemes:
-    petstore_auth:
-      type: oauth2
-      flows:
-        implicit:
-          authorizationUrl: 'http://petstore.swagger.io/oauth/dialog'
-          scopes:
-            'write:pets': modify pets in your account
-            'read:pets': read your pets
-    api_key:
-      type: apiKey
-      name: api_key
-      in: header
   schemas:
     Category:
       type: object
