@@ -326,7 +326,17 @@ components:
         products:
           type: array
           items:
-            $ref: '#/components/schemas/Product'
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+              name:
+                type: string
+              price:
+                type: number
+              details:
+                type: string
     Product:
       type: object
       properties:
@@ -338,8 +348,13 @@ components:
         price:
           type: number
         category:
-          type: integer
-          format: int64
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+            name:
+              type: string
         details:
           type: string
     User:
