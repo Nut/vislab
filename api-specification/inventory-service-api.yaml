@@ -1,0 +1,195 @@
+openapi: 3.0.0
+info:
+  title: Inventory API
+  description: This is a simple API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/Nut/inventory-service-api/1.0.0
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: categories
+  description: Everything about categories
+- name: products
+  description: Everything about products
+paths:
+  /products:
+    get:
+      tags:
+      - products
+      summary: Get all products
+      responses:
+        200:
+          description: All products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+  /products/{id}:
+    get:
+      tags:
+      - products
+      summary: Get product by id
+      parameters:
+      - name: id
+        in: path
+        description: Product id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Product by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+  /products/search:
+    post:
+      tags:
+      - products
+      summary: Search for products
+      requestBody:
+        description: The category to create.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body'
+      responses:
+        200:
+          description: Products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+  /categories:
+    get:
+      tags:
+      - categories
+      summary: Get all categories
+      responses:
+        200:
+          description: All categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+  /categories/{id}:
+    get:
+      tags:
+      - categories
+      summary: Get category by id
+      parameters:
+      - name: id
+        in: path
+        description: Category id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Category by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+    delete:
+      tags:
+      - categories
+      summary: Delete category by id
+      parameters:
+      - name: id
+        in: path
+        description: Category Id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Api Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category_products'
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        price:
+          type: number
+        category:
+          $ref: '#/components/schemas/Product_category'
+        details:
+          type: string
+    ApiResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    body:
+      required:
+      - searchDescription
+      - searchMaxPrice
+      - searchMinPrice
+      type: object
+      properties:
+        searchDescription:
+          type: string
+        searchMinPrice:
+          type: number
+        searchMaxPrice:
+          type: number
+    Category_products:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        price:
+          type: number
+        details:
+          type: string
+    Product_category:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string

@@ -1,0 +1,138 @@
+openapi: 3.0.0
+info:
+  title: Product Service API
+  description: This is a simple API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/Nut/category-service-api/1.0.0
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: products
+  description: Everything about products
+paths:
+  /products:
+    get:
+      tags:
+      - products
+      summary: Get all products
+      responses:
+        200:
+          description: All products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+    post:
+      tags:
+      - products
+      summary: Creates a new product
+      description: The product to create.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body'
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_201'
+  /products/{id}:
+    get:
+      tags:
+      - products
+      summary: Get product by id
+      parameters:
+      - name: id
+        in: path
+        description: Product id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Product by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+  /products/search:
+    post:
+      tags:
+      - products
+      summary: Search for products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body_1'
+      responses:
+        200:
+          description: Products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        price:
+          type: number
+        category:
+          type: integer
+          format: int64
+        details:
+          type: string
+    body:
+      required:
+      - categoryId
+      - details
+      - price
+      - productName
+      type: object
+      properties:
+        productName:
+          type: string
+        price:
+          type: number
+        categoryId:
+          type: integer
+        details:
+          type: string
+    inline_response_201:
+      properties:
+        productId:
+          type: integer
+    body_1:
+      required:
+      - searchDescription
+      - searchMaxPrice
+      - searchMinPrice
+      type: object
+      properties:
+        searchDescription:
+          type: string
+        searchMinPrice:
+          type: number
+        searchMaxPrice:
+          type: number

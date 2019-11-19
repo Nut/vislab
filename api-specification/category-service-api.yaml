@@ -1,0 +1,116 @@
+openapi: 3.0.0
+info:
+  title: Category Service API
+  description: This is a simple API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/Nut/category-service-api/1.0.0
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: categories
+  description: Everything about categories
+paths:
+  /categories:
+    get:
+      tags:
+      - categories
+      summary: Get all categories
+      responses:
+        200:
+          description: All categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+    post:
+      tags:
+      - categories
+      summary: Creates a new category
+      requestBody:
+        description: The category to create.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body'
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+  /categories/{id}:
+    get:
+      tags:
+      - categories
+      summary: Get category by id
+      parameters:
+      - name: id
+        in: path
+        description: Category id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Category by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+    delete:
+      tags:
+      - categories
+      summary: Delete category by id
+      parameters:
+      - name: id
+        in: path
+        description: Category Id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Api Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        products:
+          type: array
+          items:
+            type: integer
+            format: int64
+    ApiResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    body:
+      required:
+      - categoryName
+      type: object
+      properties:
+        categoryName:
+          type: string
