@@ -1,0 +1,140 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: User Service API
+tags:
+  - name: users
+    description: Everything about users
+  - name: roles
+    description: Everything about roles
+paths:
+  /users/{username}:
+    get:
+      tags:
+        - users
+      summary: Get user by username
+      parameters:
+        - in: path
+          name: username
+          required: true
+          description: Username
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    head:
+      tags:
+        - users
+      summary: Check if user already exists by username
+      parameters:
+        - in: path
+          name: username
+          required: true
+          description: Username
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User already exists
+        '404':
+          description: User does not exist
+  /users:
+    post:
+      tags:
+        - users
+      summary: Creates a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - name
+                - lastname
+                - password
+                - role
+              properties:
+                username:
+                  type: string
+                name:
+                  type: number
+                lastname:
+                  type: integer
+                password:
+                  type: string
+                role:
+                  type: object
+                  required:
+                    - type
+                    - level
+                  properties:
+                    type:
+                      type: string
+                    level:
+                      type: integer
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      description: The product to create.
+  /roles/{level}:
+    get:
+      tags:
+        - roles
+      summary: Get role by level
+      parameters:
+        - in: path
+          name: level
+          required: true
+          description: Level
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        name:
+          type: string
+        lastname:
+          type: string
+        password:
+          type: string
+        role:
+          $ref: '#/components/schemas/Role'
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        type:
+          type: string
+        level:
+          type: integer
+    ApiResponse:
+      type: object
+      properties:
+        message:
+          type: string
