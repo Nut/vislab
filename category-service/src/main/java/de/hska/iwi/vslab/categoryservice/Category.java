@@ -14,21 +14,15 @@ public class Category {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private Integer id;
+    private Long id;
     private String name;
     private int[] products;
 
-    // public Category(Integer id, String name, int[] products) {
-    //     this.id = id;
-    //     this.name = name;
-    //     this.products = products;
-    // }
-
-    public Integer getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
