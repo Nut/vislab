@@ -1,49 +1,37 @@
 package de.hska.iwi.vslab.categoryservice;
 
-
-import java.util.HashSet;
-import java.util.Set;
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 /**
  * This class contains details about categories.
  */
+
 @Entity
-@Table(name = "category")
-public class Category implements java.io.Serializable {
-
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
-    private int id;
-    private String name;
-    private Set<Product> products = new HashSet<Product>(0);
-
-    public Category() {
-    }
-
-    public Category(String name) {
-        this.name = name;
-    }
-
-    public Category(String name, Set<Product> products) {
-        this.name = name;
-        this.products = products;
-    }
+public class Category {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    public int getId() {
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Integer id;
+    private String name;
+    private int[] products;
+
+    // public Category(Integer id, String name, int[] products) {
+    //     this.id = id;
+    //     this.name = name;
+    //     this.products = products;
+    // }
+
+    public Integer getId() {
         return this.id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    @Column(name = "name", nullable = false)
     public String getName() {
         return this.name;
     }
@@ -52,13 +40,11 @@ public class Category implements java.io.Serializable {
         this.name = name;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "category")
-    public Set<Product> getProducts() {
+    public int[] getProducts() {
         return this.products;
     }
 
-    public void setProducts(Set<Product> products) {
+    public void setProducts(int[] products) {
         this.products = products;
     }
-
 }
