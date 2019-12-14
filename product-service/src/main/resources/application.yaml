@@ -1,0 +1,10 @@
+spring:
+    jpa:
+      hibernate:
+        ddl-auto: update
+    application:
+      name: product-service
+    datasource:
+      url: jdbc:mysql://${MYSQL_HOST:localhost}:3307/products
+      username: prodUser
+      password: supersecret
