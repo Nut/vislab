@@ -21,7 +21,7 @@ public class UserController {
     private RoleRepository roleRepository;
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
-    public ResponseEntity<User> createNewProduct(@RequestBody NewUser user) {
+    public ResponseEntity<User> createNewUser(@RequestBody NewUser user) {
 
         // check if Role exists, otherwise return 404
         // 1 -> regular User, 2-> Admin
@@ -40,7 +40,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users/{username}", method = RequestMethod.GET)
-    public User getProductById(@PathVariable String username) {
+    public User getUserByUsername(@PathVariable String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
     }

@@ -53,6 +53,18 @@ services:
       - category-service
       - product-service
 
+  webshop-api:
+    build:
+      context: webshop-api
+      dockerfile: Dockerfile
+    ports:
+      - "1238:8080"
+    networks:
+      - backend
+    depends_on:
+      - inventory-service
+      - user-service
+
   # Database Service (Mysql)
   category-db:
     image: mysql:5.7
