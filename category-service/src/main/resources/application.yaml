@@ -3,6 +3,6 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/categories
+    url: jdbc:mysql://category-db:3306/categories?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
     username: catUser
     password: supersecret

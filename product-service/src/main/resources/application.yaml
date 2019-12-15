@@ -5,6 +5,6 @@ spring:
   application:
     name: product-service
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:3307/products
+    url: jdbc:mysql://product-db:3306/products?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
     username: prodUser
     password: supersecret
