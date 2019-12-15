@@ -41,6 +41,18 @@ services:
     networks:
       - backend
 
+  inventory-service:
+    build:
+      context: inventory-service
+      dockerfile: Dockerfile
+    ports:
+      - "1237:8080"
+    networks:
+      - backend
+    depends_on:
+      - category-service
+      - product-service
+
   # Database Service (Mysql)
   category-db:
     image: mysql:5.7
