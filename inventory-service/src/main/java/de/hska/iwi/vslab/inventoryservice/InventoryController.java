@@ -29,7 +29,7 @@ public class InventoryController {
 
     @RequestMapping(value = "/categories/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Long> deleteCategoryById(@PathVariable Long id) {
-        // TODO implement delete functionality
+        restTemplate.delete(CATEGORY_SERVICE_URI + "/{id}", id);
         return ResponseEntity.status(HttpStatus.OK).body(id);
     }
 
