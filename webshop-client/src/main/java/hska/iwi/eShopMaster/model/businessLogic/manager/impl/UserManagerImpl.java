@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 
 import hska.iwi.eShopMaster.model.database.LoggingRequestInterceptor;
+import static hska.iwi.eShopMaster.model.ApiConfig.API_USERS;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,10 +40,9 @@ public class UserManagerImpl implements UserManager {
 		restTemplate.setInterceptors(interceptors);
 
 		NewUser newUser = new NewUser(username, name, lastname, password, role.getLevel());
-		String WEBSHOP_URI = "http://webshop-api:8080";
 
 		try {
-			restTemplate.postForLocation(WEBSHOP_URI + "/users", newUser);
+			restTemplate.postForLocation(API_USERS, newUser);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
