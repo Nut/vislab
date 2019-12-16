@@ -61,6 +61,7 @@ services:
       - "1238:8080"
     networks:
       - backend
+      - client-network
     depends_on:
       - inventory-service
       - user-service
