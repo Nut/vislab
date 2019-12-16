@@ -5,7 +5,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import org.apache.logging.log4j.*;
 //import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -70,7 +69,7 @@ public  class GenericHibernateDAO<E, PK extends Serializable> implements IGeneri
 
 		}
 	 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("")
 		public E getObjectById(PK id) {
 					
 		    Session session = HibernateUtil.getSessionFactory().getCurrentSession();
