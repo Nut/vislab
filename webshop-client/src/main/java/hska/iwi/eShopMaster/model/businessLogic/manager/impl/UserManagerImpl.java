@@ -8,10 +8,13 @@ import hska.iwi.eShopMaster.model.database.dataobjects.User;
 import hska.iwi.eShopMaster.model.database.models.NewUser;
 
 import org.springframework.web.client.RestTemplate;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 
 import hska.iwi.eShopMaster.model.database.LoggingRequestInterceptor;
 import static hska.iwi.eShopMaster.model.ApiConfig.API_USERS;
+import static hska.iwi.eShopMaster.model.ApiConfig.API_ROLES;;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,21 +26,20 @@ import java.util.List;
 
 public class UserManagerImpl implements UserManager {
 
-	private final RestTemplate restTemplate = new RestTemplate();
+	private RestTemplate restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
 
 	UserDAO helper;
 
 	public UserManagerImpl() {
 		helper = new UserDAO();
+		List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
+		interceptors.add(new LoggingRequestInterceptor());
+		restTemplate.setInterceptors(interceptors);
 	}
 
 	public void registerUser(String username, String name, String lastname, String password, Role role) {
 		// User user = new User(username, name, lastname, password, role);
 		// helper.saveObject(user);
-
-		List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
-		interceptors.add(new LoggingRequestInterceptor());
-		restTemplate.setInterceptors(interceptors);
 
 		NewUser newUser = new NewUser(username, name, lastname, password, role.getLevel());
 
@@ -52,10 +54,16 @@ public class UserManagerImpl implements UserManager {
 		if (username == null || username.equals("")) {
 			return null;
 		}
-		return helper.getUserByUsername(username);
+
+		try {
+			return restTemplate.getForObject(API_USERS + "/{username}", User.class, username);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	public boolean deleteUserById(int id) {
+		// TODO ?
 		User user = new User();
 		user.setId(id);
 		helper.deleteObject(user);
@@ -63,8 +71,9 @@ public class UserManagerImpl implements UserManager {
 	}
 
 	public Role getRoleByLevel(int level) {
-		RoleDAO roleHelper = new RoleDAO();
-		return roleHelper.getRoleByLevel(level);
+		// RoleDAO roleHelper = new RoleDAO();
+		// return roleHelper.getRoleByLevel(level);
+		return restTemplate.getForObject(API_ROLES + "/{level}", Role.class, level);
 	}
 
 	public boolean doesUserAlreadyExist(String username) {
