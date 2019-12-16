@@ -1,7 +1,6 @@
 package hska.iwi.eShopMaster.model.businessLogic.manager.impl;
 
 import hska.iwi.eShopMaster.model.businessLogic.manager.UserManager;
-import hska.iwi.eShopMaster.model.database.dataAccessObjects.RoleDAO;
 import hska.iwi.eShopMaster.model.database.dataAccessObjects.UserDAO;
 import hska.iwi.eShopMaster.model.database.dataobjects.Role;
 import hska.iwi.eShopMaster.model.database.dataobjects.User;
@@ -14,7 +13,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 
 import hska.iwi.eShopMaster.model.database.LoggingRequestInterceptor;
 import static hska.iwi.eShopMaster.model.ApiConfig.API_USERS;
-import static hska.iwi.eShopMaster.model.ApiConfig.API_ROLES;;
+import static hska.iwi.eShopMaster.model.ApiConfig.API_ROLES;
 
 import java.util.ArrayList;
 import java.util.List;
