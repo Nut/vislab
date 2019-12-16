@@ -24,7 +24,7 @@ public class UserController {
     public ResponseEntity<User> createNewUser(@RequestBody NewUser user) {
 
         // check if Role exists, otherwise return 404
-        // 1 -> regular User, 2-> Admin
+        // 1 -> regular User, 0-> Admin
         Role role = roleRepository.findByLevel(user.getRolelevel())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Role level " + user.getRolelevel() + " not found!"));

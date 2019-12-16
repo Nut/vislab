@@ -36,6 +36,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "1236:8080"
+    restart: always
     depends_on: 
       - user-db   
     networks:
@@ -47,6 +48,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "1237:8080"
+    restart: always
     networks:
       - backend
     depends_on:
@@ -109,6 +111,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
     volumes:
       - db-data-users:/var/lib/mysql
+      - ./user-service/sql:/docker-entrypoint-initdb.d/:ro
     networks:
       - backend
 
