@@ -3,7 +3,10 @@ package de.hska.iwi.vslab.webshopapi;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import de.hska.iwi.vslab.webshopapi.models.Category;
 import de.hska.iwi.vslab.webshopapi.models.NewCategory;
@@ -80,14 +83,22 @@ public class WebshopApiController {
 
     @RequestMapping(value = "/users/{username}", method = RequestMethod.GET)
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
-        User user = restTemplate.getForObject(USER_SERVICE_USERS_URI + "/{username}", User.class, username);
-        return ResponseEntity.status(HttpStatus.OK).body(user);
+        try {
+            User user = restTemplate.getForObject(USER_SERVICE_USERS_URI + "/{username}", User.class, username);
+            return ResponseEntity.status(HttpStatus.OK).body(user);
+        } catch (HttpClientErrorException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ResponseEntity<User> createNewUser(@RequestBody NewUser newUser) {
-        User user = restTemplate.postForObject(USER_SERVICE_USERS_URI, newUser, User.class);
-        return ResponseEntity.status(HttpStatus.OK).body(user);
+        try {
+            User user = restTemplate.postForObject(USER_SERVICE_USERS_URI, newUser, User.class);
+            return ResponseEntity.status(HttpStatus.OK).body(user);
+        } catch (HttpClientErrorException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getMessage());
+        }
     }
 
     /**
@@ -96,7 +107,11 @@ public class WebshopApiController {
 
     @RequestMapping(value = "/roles/{level}", method = RequestMethod.GET)
     public ResponseEntity<Role> getRoleByLevel(@PathVariable int level) {
-        Role role = restTemplate.getForObject(USER_SERVICE_ROLES_URI + "/{level}", Role.class, level);
-        return ResponseEntity.status(HttpStatus.OK).body(role);
+        try {
+            Role role = restTemplate.getForObject(USER_SERVICE_ROLES_URI + "/{level}", Role.class, level);
+            return ResponseEntity.status(HttpStatus.OK).body(role);
+        } catch (HttpClientErrorException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getMessage());
+        }
     }
 }
