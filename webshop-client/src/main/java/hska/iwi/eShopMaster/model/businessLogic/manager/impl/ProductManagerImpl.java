@@ -79,7 +79,8 @@ public class ProductManagerImpl implements ProductManager {
 	}
 
 	public void deleteProductById(int id) {
-		helper.deleteById(id);
+		// helper.deleteById(id);
+		restTemplate.delete(API_PRODUCTS + "/{id}", id);
 	}
 
 	public boolean deleteProductsByCategoryId(int categoryId) {

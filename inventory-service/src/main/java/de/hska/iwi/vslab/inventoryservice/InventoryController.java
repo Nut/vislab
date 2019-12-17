@@ -31,6 +31,11 @@ public class InventoryController {
 
     @RequestMapping(value = "/categories/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Long> deleteCategoryById(@PathVariable Long id) {
+        // TODO die prododukte der gelöschten kategorie löschen
+        Category category = this.getCategoryById(id).getBody();
+        for(int producdId: category.getProducts()) {
+            restTemplate.delete(PRODUCT_SERVICE_URI + "/{id}", producdId);
+        }
         restTemplate.delete(CATEGORY_SERVICE_URI + "/{id}", id);
         return ResponseEntity.status(HttpStatus.OK).body(id);
     }

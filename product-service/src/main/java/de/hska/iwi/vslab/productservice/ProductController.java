@@ -2,6 +2,7 @@ package de.hska.iwi.vslab.productservice;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +18,9 @@ public class ProductController {
             @RequestParam(required = false) Double searchMinPrice,
             @RequestParam(required = false) Double searchMaxPrice) {
 
-        // TODO: implement search https://howtodoinjava.com/hibernate/hibernate-criteria-queries-tutorial/#summary
-            
+        // TODO: implement search
+        // https://howtodoinjava.com/hibernate/hibernate-criteria-queries-tutorial/#summary
+
         return productRepository.findAll();
     }
 

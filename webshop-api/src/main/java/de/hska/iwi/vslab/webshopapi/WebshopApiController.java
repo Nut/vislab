@@ -77,6 +77,12 @@ public class WebshopApiController {
         return ResponseEntity.status(HttpStatus.OK).body(product);
     }
 
+    @RequestMapping(value = "/products/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Long> deleteProductById(@PathVariable Long id) {
+        restTemplate.delete(PRODUCT_SERVICE_URI + "/{id}", id);
+        return ResponseEntity.status(HttpStatus.OK).body(id);
+    }
+
     /**
      * USERS API
      */
