@@ -9,6 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import de.hska.iwi.vslab.webshopapi.models.Category;
 import de.hska.iwi.vslab.webshopapi.models.NewCategory;
+import de.hska.iwi.vslab.webshopapi.models.NewProduct;
 import de.hska.iwi.vslab.webshopapi.models.NewUser;
 import de.hska.iwi.vslab.webshopapi.models.Product;
 import de.hska.iwi.vslab.webshopapi.models.Role;
@@ -65,8 +66,8 @@ public class WebshopApiController {
     }
 
     @RequestMapping(value = "/products", method = RequestMethod.POST)
-    public ResponseEntity<Product> createNewProduct(@RequestBody Product newProduct) {
-        Product product = restTemplate.postForObject(PRODUCT_SERVICE_URI, newProduct, Product.class);
+    public ResponseEntity<Product> createNewProduct(@RequestBody NewProduct newProduct) {
+        Product product = restTemplate.postForObject(INVENTORY_PRODUCTS_URI, newProduct, Product.class);
         return ResponseEntity.status(HttpStatus.OK).body(product);
     }
 

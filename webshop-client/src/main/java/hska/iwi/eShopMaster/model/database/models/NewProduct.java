@@ -1,29 +1,20 @@
-package de.hska.iwi.vslab.webshopapi.models;
+package hska.iwi.eShopMaster.model.database.models;
 
-public class Product {
+public class NewProduct {
 
-    private Long id;
     private String name;
     private double price;
-    private Category category;
+    private int category;
     private String details;
 
-    public Product(String name, double price, Category category, String details) {
+    public NewProduct(String name, double price, int category, String details) {
         this.name = name;
         this.price = price;
         this.category = category;
         this.details = details;
     }
 
-    public Product() {
-    }
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public NewProduct() {
     }
 
     public String getName() {
@@ -42,11 +33,11 @@ public class Product {
         this.price = price;
     }
 
-    public Category getCategory() {
+    public int getCategory() {
         return this.category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(int category) {
         this.category = category;
     }
 

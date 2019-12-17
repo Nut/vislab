@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import de.hska.iwi.vslab.inventoryservice.models.Category;
+import de.hska.iwi.vslab.inventoryservice.models.NewProduct;
 import de.hska.iwi.vslab.inventoryservice.models.Product;
+import de.hska.iwi.vslab.inventoryservice.models.ProductBody;
 
 @RestController
 public class InventoryController {
@@ -34,15 +36,39 @@ public class InventoryController {
     }
 
     @RequestMapping(value = "/products", method = RequestMethod.GET)
-    public ResponseEntity<Product[]> getProducts() {
+    public ResponseEntity<NewProduct[]> getProducts() {
         // TODO: implement search
         Product[] products = restTemplate.getForObject(PRODUCT_SERVICE_URI, Product[].class);
-        return ResponseEntity.status(HttpStatus.OK).body(products);
+        NewProduct[] newProducts = new NewProduct[products.length];
+
+        for (int i = 0; i < products.length; i++) {
+            Product product = products[i];
+            Category category = restTemplate.getForObject(CATEGORY_SERVICE_URI + "/{id}", Category.class,
+                    product.getCategory());
+            NewProduct newProduct = new NewProduct(product.getId(), product.getName(), product.getPrice(), category,
+                    product.getDetails());
+            newProducts[i] = newProduct;
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(newProducts);
+    }
+
+    @RequestMapping(value = "/products", method = RequestMethod.POST)
+    public ResponseEntity<NewProduct> createNewProduct(@RequestBody ProductBody inputProduct) {
+        Product product = restTemplate.postForObject(PRODUCT_SERVICE_URI, inputProduct, Product.class);
+        Category category = restTemplate.getForObject(CATEGORY_SERVICE_URI + "/{id}", Category.class,
+                product.getCategory());
+        NewProduct newProduct = new NewProduct(product.getId(), product.getName(), product.getPrice(), category,
+                product.getDetails());
+        return ResponseEntity.status(HttpStatus.OK).body(newProduct);
     }
 
     @RequestMapping(value = "/products/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+    public ResponseEntity<NewProduct> getProductById(@PathVariable Long id) {
         Product product = restTemplate.getForObject(PRODUCT_SERVICE_URI + "/{id}", Product.class, id);
-        return ResponseEntity.status(HttpStatus.OK).body(product);
+        Category category = restTemplate.getForObject(CATEGORY_SERVICE_URI + "/{id}", Category.class,
+                product.getCategory());
+        NewProduct newProduct = new NewProduct(product.getId(), product.getName(), product.getPrice(), category,
+                product.getDetails());
+        return ResponseEntity.status(HttpStatus.OK).body(newProduct);
     }
 }

@@ -6,6 +6,7 @@ import hska.iwi.eShopMaster.model.database.LoggingRequestInterceptor;
 import hska.iwi.eShopMaster.model.database.dataAccessObjects.ProductDAO;
 import hska.iwi.eShopMaster.model.database.dataobjects.Category;
 import hska.iwi.eShopMaster.model.database.dataobjects.Product;
+import hska.iwi.eShopMaster.model.database.models.NewProduct;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,10 +44,12 @@ public class ProductManagerImpl implements ProductManager {
 	}
 
 	public Product getProductById(int id) {
-		return helper.getObjectById(id);
+		// return helper.getObjectById(id);
+		return restTemplate.getForObject(API_PRODUCTS + "/{id}", Product.class, id);
 	}
 
 	public Product getProductByName(String name) {
+		// Do we need this?
 		return helper.getObjectByName(name);
 	}
 
@@ -57,15 +60,19 @@ public class ProductManagerImpl implements ProductManager {
 		Category category = categoryManager.getCategory(categoryId);
 
 		if (category != null) {
-			Product product;
+			NewProduct product;
 			if (details == null) {
-				product = new Product(name, price, category);
+				// product = new Product(name, price, category);
+				product = new NewProduct(name, price, categoryId, "");
 			} else {
-				product = new Product(name, price, category, details);
+				// product = new Product(name, price, category, details);
+				product = new NewProduct(name, price, categoryId, details);
 			}
 
-			helper.saveObject(product);
-			productId = product.getId();
+			// helper.saveObject(product);
+			// Product newCategory = new NewCategory(name);
+			Product returnedProduct = restTemplate.postForObject(API_PRODUCTS, product, Product.class);
+			productId = returnedProduct.getId();
 		}
 
 		return productId;

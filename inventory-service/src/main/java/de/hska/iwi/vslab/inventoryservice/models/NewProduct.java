@@ -1,6 +1,6 @@
-package de.hska.iwi.vslab.webshopapi.models;
+package de.hska.iwi.vslab.inventoryservice.models;
 
-public class Product {
+public class NewProduct {
 
     private Long id;
     private String name;
@@ -8,14 +8,15 @@ public class Product {
     private Category category;
     private String details;
 
-    public Product(String name, double price, Category category, String details) {
+    public NewProduct(Long id, String name, double price, Category category, String details) {
+        this.id = id;
         this.name = name;
         this.price = price;
         this.category = category;
         this.details = details;
     }
 
-    public Product() {
+    public NewProduct() {
     }
 
     public Long getId() {
