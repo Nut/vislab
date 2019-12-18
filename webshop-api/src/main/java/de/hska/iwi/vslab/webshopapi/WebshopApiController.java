@@ -19,7 +19,6 @@ import de.hska.iwi.vslab.webshopapi.models.User;
 public class WebshopApiController {
 
     private static final String CATEGORY_SERVICE_URI = "http://category-service:8080/categories";
-    private static final String PRODUCT_SERVICE_URI = "http://product-service:8080/products";
     private static final String USER_SERVICE_USERS_URI = "http://user-service:8080/users";
     private static final String USER_SERVICE_ROLES_URI = "http://user-service:8080/roles";
     private static final String INVENTORY_CATEGORIES_URI = "http://inventory-service:8080/categories";
@@ -79,7 +78,7 @@ public class WebshopApiController {
 
     @RequestMapping(value = "/products/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Long> deleteProductById(@PathVariable Long id) {
-        restTemplate.delete(PRODUCT_SERVICE_URI + "/{id}", id);
+        restTemplate.delete(INVENTORY_PRODUCTS_URI + "/{id}", id);
         return ResponseEntity.status(HttpStatus.OK).body(id);
     }
 

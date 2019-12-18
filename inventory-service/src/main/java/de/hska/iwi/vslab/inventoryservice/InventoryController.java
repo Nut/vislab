@@ -1,10 +1,13 @@
 package de.hska.iwi.vslab.inventoryservice;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import de.hska.iwi.vslab.inventoryservice.models.Category;
 import de.hska.iwi.vslab.inventoryservice.models.NewProduct;
@@ -32,7 +35,6 @@ public class InventoryController {
 
     @RequestMapping(value = "/categories/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Long> deleteCategoryById(@PathVariable Long id) {
-        // TODO die prododukte der gelöschten kategorie löschen
         Category category = this.getCategoryById(id).getBody();
         for (Long producdId : category.getProducts()) {
             restTemplate.delete(PRODUCT_SERVICE_URI + "/{id}", producdId);
@@ -67,22 +69,15 @@ public class InventoryController {
                 product.getDetails());
 
         // update category
-        Long[] newProductArray = addNewProductArrayForCategory(category, newProduct.getId());
+        Long[] newProductArray = addProductFromProductArrayForCategory(category, newProduct.getId());
         restTemplate.patchForObject(CATEGORY_SERVICE_URI + "/{id}", newProductArray, Category.class, category.getId());
 
         return ResponseEntity.status(HttpStatus.OK).body(newProduct);
     }
 
-    private Long[] addNewProductArrayForCategory(Category category, Long productId) {
+    private Long[] addProductFromProductArrayForCategory(Category category, Long productId) {
         Long[] oldProductsArray = category.getProducts();
-        Long[] newProductsArray = new Long[oldProductsArray.length + 1];
-
-        for (int i = 0; i < oldProductsArray.length; i++) {
-            newProductsArray[i] = oldProductsArray[i];
-        }
-
-        newProductsArray[oldProductsArray.length] = productId;
-        return newProductsArray;
+        return ArrayUtils.add(oldProductsArray, productId);
     }
 
     @RequestMapping(value = "/products/{id}", method = RequestMethod.GET)
@@ -93,5 +88,29 @@ public class InventoryController {
         NewProduct newProduct = new NewProduct(product.getId(), product.getName(), product.getPrice(), category,
                 product.getDetails());
         return ResponseEntity.status(HttpStatus.OK).body(newProduct);
+    }
+
+    @RequestMapping(value = "/products/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Long> deleteProductById(@PathVariable Long id) {
+        try {
+            // update category
+            NewProduct product = this.getProductById(id).getBody();
+            Category category = restTemplate.getForObject(CATEGORY_SERVICE_URI + "/{id}", Category.class,
+                    product.getCategory().getId());
+            Long[] newProductArray = removeProductFromProductArrayForCategory(category, id);
+            restTemplate.patchForObject(CATEGORY_SERVICE_URI + "/{id}", newProductArray, Category.class,
+                    category.getId());
+
+            restTemplate.delete(PRODUCT_SERVICE_URI + "/{id}", id);
+
+            return ResponseEntity.status(HttpStatus.OK).body(id);
+        } catch (HttpClientErrorException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getMessage());
+        }
+    }
+
+    private Long[] removeProductFromProductArrayForCategory(Category category, Long productId) {
+        Long[] oldProductsArray = category.getProducts();
+        return ArrayUtils.removeElement(oldProductsArray, productId);
     }
 }
