@@ -143,6 +143,16 @@ services:
     networks:
       - client-network
 
+  # Discovery Service
+  discovery-service:
+    build:
+      context: ./discovery-server
+      dockerfile: Dockerfile
+    ports:
+      - "9900:8089"
+    networks:
+      - backend
+
 # Volumes
 volumes:
   db-data-categories:

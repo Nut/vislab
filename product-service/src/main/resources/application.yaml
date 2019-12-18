@@ -8,3 +8,13 @@ spring:
     url: jdbc:mysql://product-db:3306/products?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
     username: prodUser
     password: supersecret
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://discovery-service:8089/eureka/
+  instance:
+    preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 5
+    metadataMap:
+      instanceId: "${spring.application.name}:${random.value}"
