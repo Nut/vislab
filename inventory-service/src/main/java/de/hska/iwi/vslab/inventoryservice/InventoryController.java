@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import de.hska.iwi.vslab.inventoryservice.models.Category;
+import de.hska.iwi.vslab.inventoryservice.models.NewCategory;
 import de.hska.iwi.vslab.inventoryservice.models.NewProduct;
 import de.hska.iwi.vslab.inventoryservice.models.Product;
 import de.hska.iwi.vslab.inventoryservice.models.ProductBody;
@@ -28,6 +29,12 @@ public class InventoryController {
     public ResponseEntity<Category[]> getCategories() {
         Category[] categories = restTemplate.getForObject(CATEGORY_SERVICE_URI, Category[].class);
         return ResponseEntity.status(HttpStatus.OK).body(categories);
+    }
+
+    @RequestMapping(value = "/categories", method = RequestMethod.POST)
+    public ResponseEntity<Category> createNewCategory(@RequestBody NewCategory newCategory) {
+        Category category = restTemplate.postForObject(CATEGORY_SERVICE_URI, newCategory, Category.class);
+        return ResponseEntity.status(HttpStatus.OK).body(category);
     }
 
     @RequestMapping(value = "/categories/{id}", method = RequestMethod.GET)

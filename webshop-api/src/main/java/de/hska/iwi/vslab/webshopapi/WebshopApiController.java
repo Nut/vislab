@@ -21,7 +21,6 @@ import de.hska.iwi.vslab.webshopapi.models.User;
 @RestController
 public class WebshopApiController {
 
-    private static final String CATEGORY_SERVICE_URI = "http://category-service:8080/categories";
     private static final String USER_SERVICE_USERS_URI = "http://user-service:8080/users";
     private static final String USER_SERVICE_ROLES_URI = "http://user-service:8080/roles";
     private static final String INVENTORY_CATEGORIES_URI = "http://inventory-service:8080/categories";
@@ -40,7 +39,7 @@ public class WebshopApiController {
 
     @RequestMapping(value = "/categories", method = RequestMethod.POST)
     public ResponseEntity<Category> createNewCategory(@RequestBody NewCategory newCategory) {
-        Category category = restTemplate.postForObject(CATEGORY_SERVICE_URI, newCategory, Category.class);
+        Category category = restTemplate.postForObject(INVENTORY_CATEGORIES_URI, newCategory, Category.class);
         return ResponseEntity.status(HttpStatus.OK).body(category);
     }
 
