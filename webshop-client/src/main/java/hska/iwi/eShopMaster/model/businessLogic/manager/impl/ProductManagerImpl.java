@@ -8,6 +8,7 @@ import hska.iwi.eShopMaster.model.database.dataobjects.Category;
 import hska.iwi.eShopMaster.model.database.dataobjects.Product;
 import hska.iwi.eShopMaster.model.database.models.NewProduct;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import static hska.iwi.eShopMaster.model.ApiConfig.API_PRODUCTS;;
 
@@ -40,7 +42,16 @@ public class ProductManagerImpl implements ProductManager {
 
 	public List<Product> getProductsForSearchValues(String searchDescription, Double searchMinPrice,
 			Double searchMaxPrice) {
-		return new ProductDAO().getProductListByCriteria(searchDescription, searchMinPrice, searchMaxPrice);
+		URI targetUrl = UriComponentsBuilder.fromUriString(API_PRODUCTS) // Build the base link
+				.queryParam("description", searchDescription) // Add query params
+				.queryParam("minPrice", searchMinPrice) // Add query params
+				.queryParam("maxPrice", searchMaxPrice) // Add query params
+				.build() // Build the URL
+				.encode() // Encode any URI items that need to be encoded
+				.toUri();
+		Product[] products = restTemplate.getForObject(targetUrl, Product[].class);
+		List<Product> targetList = new ArrayList<Product>(Arrays.asList(products));
+		return targetList;
 	}
 
 	public Product getProductById(int id) {

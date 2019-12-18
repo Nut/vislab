@@ -14,14 +14,19 @@ public class ProductController {
     private ProductRepository productRepository;
 
     @RequestMapping(value = "/products", method = RequestMethod.GET)
-    public Iterable<Product> getAllProducts(@RequestParam(required = false) String searchDescription,
-            @RequestParam(required = false) Double searchMinPrice,
-            @RequestParam(required = false) Double searchMaxPrice) {
+    public Iterable<Product> getAllProducts(@RequestParam(defaultValue = "", required = false) String description,
+            @RequestParam(required = false) Double minPrice, @RequestParam(required = false) Double maxPrice) {
+        minPrice = minPrice == null ? Double.MIN_VALUE : minPrice;
+        maxPrice = maxPrice == null ? Double.MAX_VALUE : maxPrice;
 
-        // TODO: implement search
-        // https://howtodoinjava.com/hibernate/hibernate-criteria-queries-tutorial/#summary
+        if (description.isEmpty()) {
+            return this.productRepository.findByPriceBetween(mapToDefaultSeachCriteria(minPrice, Double.MIN_VALUE),
+                    mapToDefaultSeachCriteria(maxPrice, Double.MAX_VALUE));
+        }
 
-        return productRepository.findAll();
+        return this.productRepository.findByDetailsContainingAndPriceBetween(description,
+                mapToDefaultSeachCriteria(minPrice, Double.MIN_VALUE),
+                mapToDefaultSeachCriteria(maxPrice, Double.MAX_VALUE));
     }
 
     @RequestMapping(value = "/products", method = RequestMethod.POST)
@@ -48,5 +53,9 @@ public class ProductController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+    }
+
+    private double mapToDefaultSeachCriteria(final double searchCriteria, final double defaultValue) {
+        return searchCriteria < 0.00001 ? defaultValue : searchCriteria;
     }
 }

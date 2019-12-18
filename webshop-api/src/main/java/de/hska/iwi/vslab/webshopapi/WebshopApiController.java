@@ -1,11 +1,14 @@
 package de.hska.iwi.vslab.webshopapi;
 
+import java.net.URI;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import de.hska.iwi.vslab.webshopapi.models.Category;
 import de.hska.iwi.vslab.webshopapi.models.NewCategory;
@@ -58,9 +61,16 @@ public class WebshopApiController {
      */
 
     @RequestMapping(value = "/products", method = RequestMethod.GET)
-    public ResponseEntity<Product[]> getProducts() {
-        // TODO: implement search
-        Product[] products = restTemplate.getForObject(INVENTORY_PRODUCTS_URI, Product[].class);
+    public ResponseEntity<Product[]> getProducts(@RequestParam(required = false) String description,
+            @RequestParam(required = false) Double minPrice, @RequestParam(required = false) Double maxPrice) {
+        URI targetUrl = UriComponentsBuilder.fromUriString(INVENTORY_PRODUCTS_URI) // Build the base link
+                .queryParam("description", description) // Add query params
+                .queryParam("minPrice", minPrice) // Add query params
+                .queryParam("maxPrice", maxPrice) // Add query params
+                .build() // Build the URL
+                .encode() // Encode any URI items that need to be encoded
+                .toUri();
+        Product[] products = restTemplate.getForObject(targetUrl, Product[].class);
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 

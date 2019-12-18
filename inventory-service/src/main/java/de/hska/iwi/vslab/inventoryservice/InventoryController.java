@@ -1,5 +1,7 @@
 package de.hska.iwi.vslab.inventoryservice;
 
+import java.net.URI;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import de.hska.iwi.vslab.inventoryservice.models.Category;
 import de.hska.iwi.vslab.inventoryservice.models.NewProduct;
@@ -44,9 +47,17 @@ public class InventoryController {
     }
 
     @RequestMapping(value = "/products", method = RequestMethod.GET)
-    public ResponseEntity<NewProduct[]> getProducts() {
-        // TODO: implement search
-        Product[] products = restTemplate.getForObject(PRODUCT_SERVICE_URI, Product[].class);
+    public ResponseEntity<NewProduct[]> getProducts(@RequestParam(required = false) String description,
+            @RequestParam(required = false) Double minPrice, @RequestParam(required = false) Double maxPrice) {
+        URI targetUrl = UriComponentsBuilder.fromUriString(PRODUCT_SERVICE_URI) // Build the base link
+                .queryParam("description", description) // Add query params
+                .queryParam("minPrice", minPrice) // Add query params
+                .queryParam("maxPrice", maxPrice) // Add query params
+                .build() // Build the URL
+                .encode() // Encode any URI items that need to be encoded
+                .toUri();
+
+        Product[] products = restTemplate.getForObject(targetUrl, Product[].class);
         NewProduct[] newProducts = new NewProduct[products.length];
 
         for (int i = 0; i < products.length; i++) {
