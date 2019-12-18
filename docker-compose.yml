@@ -1,6 +1,6 @@
 # Docker Compose file Reference (https://docs.docker.com/compose/compose-file/)
 
-version: '3.7'
+version: "3.7"
 
 # Define services
 services:
@@ -13,8 +13,8 @@ services:
     ports:
       - "1234:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
     restart: always
-    depends_on: 
-      - category-db # This service depends on mysql. Start that first.  
+    depends_on:
+      - category-db # This service depends on mysql. Start that first.
     networks: # Networks to join (Services on the same network can communicate with each other using their name)
       - backend
 
@@ -25,8 +25,8 @@ services:
     ports:
       - "1235:8080"
     restart: always
-    depends_on: 
-      - product-db  
+    depends_on:
+      - product-db
     networks:
       - backend
 
@@ -37,8 +37,8 @@ services:
     ports:
       - "1236:8080"
     restart: always
-    depends_on: 
-      - user-db   
+    depends_on:
+      - user-db
     networks:
       - backend
 
@@ -82,7 +82,7 @@ services:
     volumes:
       - db-data-categories:/var/lib/mysql
     networks:
-      - backend  
+      - backend
 
   product-db:
     image: mysql:5.7
@@ -126,7 +126,7 @@ services:
       - client-network
     depends_on:
       - web-shop-db-image
-  
+
   web-shop-db-image:
     build:
       context: ./webshop-client
@@ -150,6 +150,15 @@ services:
       dockerfile: Dockerfile
     ports:
       - "9900:8761"
+    networks:
+      - backend
+
+  hystrix-dashboard:
+    build:
+      context: ./hystrix-dashboard
+      dockerfile: Dockerfile
+    ports:
+      - "9901:8080"
     networks:
       - backend
 

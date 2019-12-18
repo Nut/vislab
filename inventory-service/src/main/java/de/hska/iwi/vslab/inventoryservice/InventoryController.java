@@ -1,9 +1,13 @@
 package de.hska.iwi.vslab.inventoryservice;
 
 import java.net.URI;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +29,14 @@ import de.hska.iwi.vslab.inventoryservice.models.ProductBody;
 @RestController
 public class InventoryController {
 
-    // private static final String getCategoryURL() = "http://category-service:8080/categories";
-    // private static final String PRODUCT_SERVICE_URI = "http://product-service:8080/products";
     private static RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory());
+    private static Map<Long, Category> categoryCache = new LinkedHashMap<>();
 
     @Autowired
     private EurekaClient discoveryClient;
 
+    @HystrixCommand(fallbackMethod = "getCategoriesFromCache", commandProperties = {
+            @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "2") })
     @RequestMapping(value = "/categories", method = RequestMethod.GET)
     public ResponseEntity<Category[]> getCategories() {
         Category[] categories = restTemplate.getForObject(getCategoryURL(), Category[].class);
@@ -123,8 +128,7 @@ public class InventoryController {
             Category category = restTemplate.getForObject(getCategoryURL() + "/{id}", Category.class,
                     product.getCategory().getId());
             Long[] newProductArray = removeProductFromProductArrayForCategory(category, id);
-            restTemplate.patchForObject(getCategoryURL() + "/{id}", newProductArray, Category.class,
-                    category.getId());
+            restTemplate.patchForObject(getCategoryURL() + "/{id}", newProductArray, Category.class, category.getId());
 
             restTemplate.delete(getProductURL() + "/{id}", id);
 
@@ -147,5 +151,11 @@ public class InventoryController {
     private String getProductURL() {
         InstanceInfo instance = discoveryClient.getNextServerFromEureka("PRODUCT-SERVICE", false);
         return instance.getHomePageUrl() + "products";
+    }
+
+    private ResponseEntity<Category[]> getCategoriesFromCache() {
+        return ResponseEntity.ok(categoryCache.entrySet().stream()
+                .map(e -> e.getValue())
+                .toArray(Category[]::new));
     }
 }
