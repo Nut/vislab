@@ -1,8 +1,5 @@
 package hska.iwi.eShopMaster.model.database.dataobjects;
 
-
-import java.util.HashSet;
-import java.util.Set;
 import javax.persistence.*;
 
 /**
@@ -19,8 +16,8 @@ public class Category implements java.io.Serializable {
 	private int id;
 	private String name;
 	// private Set<Product> products = new HashSet<Product>(0);
-	private Long[] products = new Long[]{};
-	
+	private Long[] products = new Long[] {};
+
 	public Category() {
 	}
 

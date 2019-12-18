@@ -1,7 +1,6 @@
 package hska.iwi.eShopMaster.model.businessLogic.manager.impl;
 
 import hska.iwi.eShopMaster.model.businessLogic.manager.UserManager;
-import hska.iwi.eShopMaster.model.database.dataAccessObjects.UserDAO;
 import hska.iwi.eShopMaster.model.database.dataobjects.Role;
 import hska.iwi.eShopMaster.model.database.dataobjects.User;
 import hska.iwi.eShopMaster.model.database.models.NewUser;
@@ -25,21 +24,16 @@ import java.util.List;
 
 public class UserManagerImpl implements UserManager {
 
-	private RestTemplate restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
-
-	UserDAO helper;
+	private RestTemplate restTemplate = new RestTemplate(
+			new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
 
 	public UserManagerImpl() {
-		helper = new UserDAO();
 		List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
 		interceptors.add(new LoggingRequestInterceptor());
 		restTemplate.setInterceptors(interceptors);
 	}
 
 	public void registerUser(String username, String name, String lastname, String password, Role role) {
-		// User user = new User(username, name, lastname, password, role);
-		// helper.saveObject(user);
-
 		NewUser newUser = new NewUser(username, name, lastname, password, role.getLevel());
 
 		try {
@@ -62,16 +56,10 @@ public class UserManagerImpl implements UserManager {
 	}
 
 	public boolean deleteUserById(int id) {
-		// TODO ?
-		User user = new User();
-		user.setId(id);
-		helper.deleteObject(user);
 		return true;
 	}
 
 	public Role getRoleByLevel(int level) {
-		// RoleDAO roleHelper = new RoleDAO();
-		// return roleHelper.getRoleByLevel(level);
 		return restTemplate.getForObject(API_ROLES + "/{level}", Role.class, level);
 	}
 

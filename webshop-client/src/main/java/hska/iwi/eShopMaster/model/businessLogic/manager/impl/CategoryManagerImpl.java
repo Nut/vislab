@@ -2,7 +2,6 @@ package hska.iwi.eShopMaster.model.businessLogic.manager.impl;
 
 import hska.iwi.eShopMaster.model.businessLogic.manager.CategoryManager;
 import hska.iwi.eShopMaster.model.database.LoggingRequestInterceptor;
-import hska.iwi.eShopMaster.model.database.dataAccessObjects.CategoryDAO;
 import hska.iwi.eShopMaster.model.database.dataobjects.Category;
 import hska.iwi.eShopMaster.model.database.models.NewCategory;
 
@@ -18,12 +17,10 @@ import org.springframework.web.client.RestTemplate;
 import static hska.iwi.eShopMaster.model.ApiConfig.API_CATEGORIES;
 
 public class CategoryManagerImpl implements CategoryManager {
-	private CategoryDAO helper;
 	private RestTemplate restTemplate = new RestTemplate(
 			new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
 
 	public CategoryManagerImpl() {
-		helper = new CategoryDAO();
 		List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
 		interceptors.add(new LoggingRequestInterceptor());
 		restTemplate.setInterceptors(interceptors);
@@ -40,8 +37,7 @@ public class CategoryManagerImpl implements CategoryManager {
 	}
 
 	public Category getCategoryByName(String name) {
-		// TODO ?
-		return helper.getObjectByName(name);
+		return null;
 	}
 
 	public void addCategory(String name) {
