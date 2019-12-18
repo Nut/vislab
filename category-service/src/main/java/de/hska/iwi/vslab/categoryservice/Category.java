@@ -16,7 +16,7 @@ public class Category {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
     private String name;
-    private int[] products;
+    private Long[] products;
 
     public Long getId() {
         return this.id;
@@ -34,11 +34,11 @@ public class Category {
         this.name = name;
     }
 
-    public int[] getProducts() {
+    public Long[] getProducts() {
         return this.products;
     }
 
-    public void setProducts(int[] products) {
+    public void setProducts(Long[] products) {
         this.products = products;
     }
 }

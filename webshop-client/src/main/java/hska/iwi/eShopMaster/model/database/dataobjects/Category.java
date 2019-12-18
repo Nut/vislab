@@ -18,8 +18,9 @@ public class Category implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	private int id;
 	private String name;
-	private Set<Product> products = new HashSet<Product>(0);
-
+	// private Set<Product> products = new HashSet<Product>(0);
+	private Long[] products = new Long[]{};
+	
 	public Category() {
 	}
 
@@ -27,7 +28,7 @@ public class Category implements java.io.Serializable {
 		this.name = name;
 	}
 
-	public Category(String name, Set<Product> products) {
+	public Category(String name, Long[] products) {
 		this.name = name;
 		this.products = products;
 	}
@@ -53,11 +54,11 @@ public class Category implements java.io.Serializable {
 	}
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "category")
-	public Set<Product> getProducts() {
+	public Long[] getProducts() {
 		return this.products;
 	}
 
-	public void setProducts(Set<Product> products) {
+	public void setProducts(Long[] products) {
 		this.products = products;
 	}
 

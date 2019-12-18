@@ -2,6 +2,7 @@ package de.hska.iwi.vslab.inventoryservice;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,7 +16,7 @@ public class InventoryController {
 
     private static final String CATEGORY_SERVICE_URI = "http://category-service:8080/categories";
     private static final String PRODUCT_SERVICE_URI = "http://product-service:8080/products";
-    private static RestTemplate restTemplate = new RestTemplate();
+    private static RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory());
 
     @RequestMapping(value = "/categories", method = RequestMethod.GET)
     public ResponseEntity<Category[]> getCategories() {
@@ -33,7 +34,7 @@ public class InventoryController {
     public ResponseEntity<Long> deleteCategoryById(@PathVariable Long id) {
         // TODO die prododukte der gelöschten kategorie löschen
         Category category = this.getCategoryById(id).getBody();
-        for(int producdId: category.getProducts()) {
+        for (Long producdId : category.getProducts()) {
             restTemplate.delete(PRODUCT_SERVICE_URI + "/{id}", producdId);
         }
         restTemplate.delete(CATEGORY_SERVICE_URI + "/{id}", id);
@@ -64,7 +65,24 @@ public class InventoryController {
                 product.getCategory());
         NewProduct newProduct = new NewProduct(product.getId(), product.getName(), product.getPrice(), category,
                 product.getDetails());
+
+        // update category
+        Long[] newProductArray = addNewProductArrayForCategory(category, newProduct.getId());
+        restTemplate.patchForObject(CATEGORY_SERVICE_URI + "/{id}", newProductArray, Category.class, category.getId());
+
         return ResponseEntity.status(HttpStatus.OK).body(newProduct);
+    }
+
+    private Long[] addNewProductArrayForCategory(Category category, Long productId) {
+        Long[] oldProductsArray = category.getProducts();
+        Long[] newProductsArray = new Long[oldProductsArray.length + 1];
+
+        for (int i = 0; i < oldProductsArray.length; i++) {
+            newProductsArray[i] = oldProductsArray[i];
+        }
+
+        newProductsArray[oldProductsArray.length] = productId;
+        return newProductsArray;
     }
 
     @RequestMapping(value = "/products/{id}", method = RequestMethod.GET)

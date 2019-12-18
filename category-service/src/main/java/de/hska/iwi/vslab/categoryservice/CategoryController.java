@@ -23,7 +23,7 @@ public class CategoryController {
     @RequestMapping(value = "/categories", method = RequestMethod.POST)
     public Category createNewCategory(@RequestBody NewCategoryDTO newCategory) {
         Category newCat = new Category();
-        int[] products = {};
+        Long[] products = {};
         newCat.setName(newCategory.getCategoryName());
         newCat.setProducts(products);
         categoryRepository.save(newCat);
@@ -45,5 +45,15 @@ public class CategoryController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
+    }
+
+    @RequestMapping(value = "/categories/{id}", method = RequestMethod.PATCH)
+    public ResponseEntity<Category> update2CategoryById(@RequestBody Long[] productIds, @PathVariable Long id) {
+        return categoryRepository.findById(id).map(category -> {
+            category.setProducts(productIds);
+            return ResponseEntity.status(HttpStatus.OK).body(categoryRepository.save(category));
+        }).orElseGet(() -> {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        });
     }
 }
