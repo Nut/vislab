@@ -1,12 +1,12 @@
 server:
-    port: 8089
+    port: 8761
 
 eureka:
     instance:
         hostname: discovery-service
     client:
-        registerWithEureka: false
-        fetchRegistry: false
+        register-with-eureka: false
+        fetch-registry: false
     server:
         waitTimeInMsWhenSyncEmpty: 0
     service-url:

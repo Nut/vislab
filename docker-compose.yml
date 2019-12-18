@@ -149,7 +149,7 @@ services:
       context: ./discovery-server
       dockerfile: Dockerfile
     ports:
-      - "9900:8089"
+      - "9900:8761"
     networks:
       - backend
 

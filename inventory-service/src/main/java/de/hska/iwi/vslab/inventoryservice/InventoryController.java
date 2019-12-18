@@ -2,7 +2,11 @@ package de.hska.iwi.vslab.inventoryservice;
 
 import java.net.URI;
 
+import com.netflix.appinfo.InstanceInfo;
+import com.netflix.discovery.EurekaClient;
+
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -21,25 +25,28 @@ import de.hska.iwi.vslab.inventoryservice.models.ProductBody;
 @RestController
 public class InventoryController {
 
-    private static final String CATEGORY_SERVICE_URI = "http://category-service:8080/categories";
-    private static final String PRODUCT_SERVICE_URI = "http://product-service:8080/products";
+    // private static final String getCategoryURL() = "http://category-service:8080/categories";
+    // private static final String PRODUCT_SERVICE_URI = "http://product-service:8080/products";
     private static RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory());
+
+    @Autowired
+    private EurekaClient discoveryClient;
 
     @RequestMapping(value = "/categories", method = RequestMethod.GET)
     public ResponseEntity<Category[]> getCategories() {
-        Category[] categories = restTemplate.getForObject(CATEGORY_SERVICE_URI, Category[].class);
+        Category[] categories = restTemplate.getForObject(getCategoryURL(), Category[].class);
         return ResponseEntity.status(HttpStatus.OK).body(categories);
     }
 
     @RequestMapping(value = "/categories", method = RequestMethod.POST)
     public ResponseEntity<Category> createNewCategory(@RequestBody NewCategory newCategory) {
-        Category category = restTemplate.postForObject(CATEGORY_SERVICE_URI, newCategory, Category.class);
+        Category category = restTemplate.postForObject(getCategoryURL(), newCategory, Category.class);
         return ResponseEntity.status(HttpStatus.OK).body(category);
     }
 
     @RequestMapping(value = "/categories/{id}", method = RequestMethod.GET)
     public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
-        Category category = restTemplate.getForObject(CATEGORY_SERVICE_URI + "/{id}", Category.class, id);
+        Category category = restTemplate.getForObject(getCategoryURL() + "/{id}", Category.class, id);
         return ResponseEntity.status(HttpStatus.OK).body(category);
     }
 
@@ -47,16 +54,16 @@ public class InventoryController {
     public ResponseEntity<Long> deleteCategoryById(@PathVariable Long id) {
         Category category = this.getCategoryById(id).getBody();
         for (Long producdId : category.getProducts()) {
-            restTemplate.delete(PRODUCT_SERVICE_URI + "/{id}", producdId);
+            restTemplate.delete(getProductURL() + "/{id}", producdId);
         }
-        restTemplate.delete(CATEGORY_SERVICE_URI + "/{id}", id);
+        restTemplate.delete(getCategoryURL() + "/{id}", id);
         return ResponseEntity.status(HttpStatus.OK).body(id);
     }
 
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     public ResponseEntity<NewProduct[]> getProducts(@RequestParam(required = false) String description,
             @RequestParam(required = false) Double minPrice, @RequestParam(required = false) Double maxPrice) {
-        URI targetUrl = UriComponentsBuilder.fromUriString(PRODUCT_SERVICE_URI) // Build the base link
+        URI targetUrl = UriComponentsBuilder.fromUriString(getProductURL()) // Build the base link
                 .queryParam("description", description) // Add query params
                 .queryParam("minPrice", minPrice) // Add query params
                 .queryParam("maxPrice", maxPrice) // Add query params
@@ -69,7 +76,7 @@ public class InventoryController {
 
         for (int i = 0; i < products.length; i++) {
             Product product = products[i];
-            Category category = restTemplate.getForObject(CATEGORY_SERVICE_URI + "/{id}", Category.class,
+            Category category = restTemplate.getForObject(getCategoryURL() + "/{id}", Category.class,
                     product.getCategory());
             NewProduct newProduct = new NewProduct(product.getId(), product.getName(), product.getPrice(), category,
                     product.getDetails());
@@ -80,15 +87,15 @@ public class InventoryController {
 
     @RequestMapping(value = "/products", method = RequestMethod.POST)
     public ResponseEntity<NewProduct> createNewProduct(@RequestBody ProductBody inputProduct) {
-        Product product = restTemplate.postForObject(PRODUCT_SERVICE_URI, inputProduct, Product.class);
-        Category category = restTemplate.getForObject(CATEGORY_SERVICE_URI + "/{id}", Category.class,
+        Product product = restTemplate.postForObject(getProductURL(), inputProduct, Product.class);
+        Category category = restTemplate.getForObject(getCategoryURL() + "/{id}", Category.class,
                 product.getCategory());
         NewProduct newProduct = new NewProduct(product.getId(), product.getName(), product.getPrice(), category,
                 product.getDetails());
 
         // update category
         Long[] newProductArray = addProductFromProductArrayForCategory(category, newProduct.getId());
-        restTemplate.patchForObject(CATEGORY_SERVICE_URI + "/{id}", newProductArray, Category.class, category.getId());
+        restTemplate.patchForObject(getCategoryURL() + "/{id}", newProductArray, Category.class, category.getId());
 
         return ResponseEntity.status(HttpStatus.OK).body(newProduct);
     }
@@ -100,8 +107,8 @@ public class InventoryController {
 
     @RequestMapping(value = "/products/{id}", method = RequestMethod.GET)
     public ResponseEntity<NewProduct> getProductById(@PathVariable Long id) {
-        Product product = restTemplate.getForObject(PRODUCT_SERVICE_URI + "/{id}", Product.class, id);
-        Category category = restTemplate.getForObject(CATEGORY_SERVICE_URI + "/{id}", Category.class,
+        Product product = restTemplate.getForObject(getProductURL() + "/{id}", Product.class, id);
+        Category category = restTemplate.getForObject(getCategoryURL() + "/{id}", Category.class,
                 product.getCategory());
         NewProduct newProduct = new NewProduct(product.getId(), product.getName(), product.getPrice(), category,
                 product.getDetails());
@@ -113,13 +120,13 @@ public class InventoryController {
         try {
             // update category
             NewProduct product = this.getProductById(id).getBody();
-            Category category = restTemplate.getForObject(CATEGORY_SERVICE_URI + "/{id}", Category.class,
+            Category category = restTemplate.getForObject(getCategoryURL() + "/{id}", Category.class,
                     product.getCategory().getId());
             Long[] newProductArray = removeProductFromProductArrayForCategory(category, id);
-            restTemplate.patchForObject(CATEGORY_SERVICE_URI + "/{id}", newProductArray, Category.class,
+            restTemplate.patchForObject(getCategoryURL() + "/{id}", newProductArray, Category.class,
                     category.getId());
 
-            restTemplate.delete(PRODUCT_SERVICE_URI + "/{id}", id);
+            restTemplate.delete(getProductURL() + "/{id}", id);
 
             return ResponseEntity.status(HttpStatus.OK).body(id);
         } catch (HttpClientErrorException e) {
@@ -130,5 +137,15 @@ public class InventoryController {
     private Long[] removeProductFromProductArrayForCategory(Category category, Long productId) {
         Long[] oldProductsArray = category.getProducts();
         return ArrayUtils.removeElement(oldProductsArray, productId);
+    }
+
+    private String getCategoryURL() {
+        InstanceInfo instance = discoveryClient.getNextServerFromEureka("CATEGORY-SERVICE", false);
+        return instance.getHomePageUrl() + "categories";
+    }
+
+    private String getProductURL() {
+        InstanceInfo instance = discoveryClient.getNextServerFromEureka("PRODUCT-SERVICE", false);
+        return instance.getHomePageUrl() + "products";
     }
 }
