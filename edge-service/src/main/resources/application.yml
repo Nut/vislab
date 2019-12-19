@@ -1,0 +1,12 @@
+server:
+  port: 8080
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10
+    statusPageUrlPath: /info
+    healthCheckUrlPath: /health
+
+zuul:
+  ignoredServices: "*"
+  routes:
+    webshop-api: /api/**

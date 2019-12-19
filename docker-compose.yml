@@ -162,6 +162,16 @@ services:
     networks:
       - backend
 
+  edge-service:
+    build:
+      context: ./edge-service
+      dockerfile: Dockerfile
+    ports:
+      - "9902:8080"
+    networks:
+      - client-network
+      - backend
+
 # Volumes
 volumes:
   db-data-categories:
