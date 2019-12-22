@@ -1,13 +1,9 @@
 package de.hska.iwi.vslab.inventoryservice;
 
 import java.net.URI;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,20 +26,13 @@ import de.hska.iwi.vslab.inventoryservice.models.ProductBody;
 public class InventoryController {
 
     private static RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory());
-    private Map<Long, Category> categoryCache = new LinkedHashMap<>();    
-    private Map<Long, NewProduct> productCache = new LinkedHashMap<>();
 
     @Autowired
     private EurekaClient discoveryClient;
 
-    @HystrixCommand(fallbackMethod = "getCategoriesFromCache", commandProperties = {
-            @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "1") })
     @RequestMapping(value = "/categories", method = RequestMethod.GET)
     public ResponseEntity<Category[]> getCategories() {
         Category[] categories = restTemplate.getForObject(getCategoryURL(), Category[].class);
-        for (Category category : categories) {
-            this.categoryCache.put(category.getId(), category);
-        } 
         return ResponseEntity.status(HttpStatus.OK).body(categories);
     }
 
@@ -53,12 +42,9 @@ public class InventoryController {
         return ResponseEntity.status(HttpStatus.OK).body(category);
     }
 
-    @HystrixCommand(fallbackMethod = "getCategoryFromCache", commandProperties = {
-        @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "1") })
     @RequestMapping(value = "/categories/{id}", method = RequestMethod.GET)
     public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
         Category category = restTemplate.getForObject(getCategoryURL() + "/{id}", Category.class, id);
-        this.categoryCache.put(category.getId(), category);
         return ResponseEntity.status(HttpStatus.OK).body(category);
     }
 
@@ -72,8 +58,6 @@ public class InventoryController {
         return ResponseEntity.status(HttpStatus.OK).body(id);
     }
 
-    @HystrixCommand(fallbackMethod = "getProductsFromCache", commandProperties = {
-        @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "1") })
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     public ResponseEntity<NewProduct[]> getProducts(@RequestParam(required = false) String description,
             @RequestParam(required = false) Double minPrice, @RequestParam(required = false) Double maxPrice) {
@@ -96,9 +80,7 @@ public class InventoryController {
                     product.getDetails());
             newProducts[i] = newProduct;
         }
-        for (NewProduct newProduct : newProducts) {
-            this.productCache.put(newProduct.getId(), newProduct);
-        } 
+
         return ResponseEntity.status(HttpStatus.OK).body(newProducts);
     }
 
@@ -122,8 +104,6 @@ public class InventoryController {
         return ArrayUtils.add(oldProductsArray, productId);
     }
 
-    @HystrixCommand(fallbackMethod = "getProductFromCache", commandProperties = {
-        @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "1") })
     @RequestMapping(value = "/products/{id}", method = RequestMethod.GET)
     public ResponseEntity<NewProduct> getProductById(@PathVariable Long id) {
         Product product = restTemplate.getForObject(getProductURL() + "/{id}", Product.class, id);
@@ -131,7 +111,6 @@ public class InventoryController {
                 product.getCategory());
         NewProduct newProduct = new NewProduct(product.getId(), product.getName(), product.getPrice(), category,
                 product.getDetails());
-        this.productCache.put(newProduct.getId(), newProduct);
         return ResponseEntity.status(HttpStatus.OK).body(newProduct);
     }
 
@@ -165,22 +144,5 @@ public class InventoryController {
     private String getProductURL() {
         InstanceInfo instance = discoveryClient.getNextServerFromEureka("PRODUCT-SERVICE", false);
         return instance.getHomePageUrl() + "products";
-    }
-
-    private ResponseEntity<Category> getCategoryFromCache(Long id) {
-        return ResponseEntity.ok(categoryCache.get(id));
-    }
-    private ResponseEntity<Category[]> getCategoriesFromCache() {
-        return ResponseEntity.ok(categoryCache.entrySet().stream()
-                .map(e -> e.getValue())
-                .toArray(Category[]::new));
-    }
-    private ResponseEntity<NewProduct> getProductFromCache(Long id) {
-        return ResponseEntity.ok(productCache.get(id));
-    }
-    private ResponseEntity<NewProduct[]> getProductsFromCache() {
-        return ResponseEntity.ok(productCache.entrySet().stream()
-                .map(e -> e.getValue())
-                .toArray(NewProduct[]::new));
     }
 }

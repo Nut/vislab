@@ -11,9 +11,3 @@ eureka:
     leaseRenewalIntervalInSeconds: 5
     metadataMap:
       instanceId: "${spring.application.name}:${random.value}"
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: hystrix.stream, info, health
