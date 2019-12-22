@@ -8,10 +8,10 @@ services:
   category-service:
     # Configuration for building the docker image for the backend service
     build:
-      context: category-service # Use an image built from the specified dockerfile in the `polling-app-server` directory.
+      context: category-service # Use an image built from the specified dockerfile in the `category-service` directory.
       dockerfile: Dockerfile
     ports:
-      - "1234:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
+      - "1234:8080" # Forward the exposed port 8080 on the container to port 1234 on the host machine
     restart: always
     depends_on:
       - category-db # This service depends on mysql. Start that first.
@@ -72,7 +72,7 @@ services:
   category-db:
     image: mysql:5.7
     ports:
-      - "3306:3306"
+      - "3306"
     restart: always
     environment:
       MYSQL_DATABASE: categories
@@ -87,7 +87,7 @@ services:
   product-db:
     image: mysql:5.7
     ports:
-      - "3307:3306"
+      - "3306"
     restart: always
     environment:
       MYSQL_DATABASE: products
@@ -102,7 +102,7 @@ services:
   user-db:
     image: mysql:5.7
     ports:
-      - "3308:3306"
+      - "3306"
     restart: always
     environment:
       MYSQL_DATABASE: users
@@ -122,24 +122,6 @@ services:
     restart: always
     ports:
       - "8888:8080"
-    networks:
-      - client-network
-    depends_on:
-      - web-shop-db-image
-
-  web-shop-db-image:
-    build:
-      context: ./webshop-client
-      dockerfile: docker/DockerfileMySQL
-    volumes:
-      - "./.data/db:/var/lib/mysql"
-    environment:
-      MYSQL_ROOT_PASSWORD: c8de110f37300a53a971749
-      MYSQL_DATABASE: webshop
-      MYSQL_USER: webshopuser
-      MYSQL_PASSWORD: 240b2c6d58ff2ce2f508b49f
-    ports:
-      - "3333:3306"
     networks:
       - client-network
 
