@@ -1,4 +1,4 @@
 # vislab
  
 ## Architecture
-![webshop architecture](docs/diagrams/microservices-architecture.jpg)
+![webshop architecture](docs/diagrams/architecture_v2.jpg)
