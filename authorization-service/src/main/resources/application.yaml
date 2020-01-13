@@ -1,0 +1,18 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /auth
+
+spring:
+  application:
+      name: authorization-service
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://discovery-service:8761/eureka/
+  instance:
+    preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 5
+    metadataMap:
+      instanceId: "${spring.application.name}:${random.value}"

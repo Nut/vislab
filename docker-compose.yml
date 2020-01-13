@@ -154,6 +154,17 @@ services:
       - client-network
       - backend
 
+  authorization-service:
+    build:
+      context: ./authorization-service
+      dockerfile: Dockerfile
+    ports:
+      - "9903:8080"
+    networks:
+      - backend
+    depends_on:
+      - discovery-service
+
 # Volumes
 volumes:
   db-data-categories:
