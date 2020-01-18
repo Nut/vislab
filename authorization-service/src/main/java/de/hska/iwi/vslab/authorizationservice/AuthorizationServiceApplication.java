@@ -74,9 +74,14 @@ public class AuthorizationServiceApplication {
 			configurer.inMemory()
 					.withClient("webshop-webclient")
 					.secret("secret")
-					.authorizedGrantTypes("password")
+					.authorizedGrantTypes("password", "refresh_token")
 					.authorities("ADMIN", "USER")
-					.scopes("read", "write");
+					.scopes("read", "write")
+					.and()
+					.withClient("user-service-client")
+					.secret("usersecret")
+					.authorizedGrantTypes("client_credentials")
+					.scopes("user-service.write");
 			// @formatter:on
 		}
 
@@ -110,7 +115,7 @@ public class AuthorizationServiceApplication {
 				.password(encoder()
 					.encode("password")
 				)
-				.roles("USER");
+				.roles("ADMIN");
 			// @formatter:on
 		}
 
