@@ -94,11 +94,10 @@ public class AuthorizationServiceApplication {
 
 	@Configuration
 	@EnableWebSecurity
-	// @EnableGlobalMethodSecurity(securedEnabled = true)
 	public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-		// @Resource(name = "userService")
-		// private UserDetailsService userDetailsService;
+		@Resource(name = "userService")
+		private UserDetailsService userDetailsService;
 
 		@Override
 		@Bean
@@ -108,15 +107,7 @@ public class AuthorizationServiceApplication {
 
 		@Autowired
 		public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
-			// auth.userDetailsService(userDetailsService).passwordEncoder(encoder());
-			// @formatter:off
-			auth.inMemoryAuthentication()
-				.withUser("yannick")
-				.password(encoder()
-					.encode("password")
-				)
-				.roles("ADMIN");
-			// @formatter:on
+			auth.userDetailsService(userDetailsService).passwordEncoder(encoder());
 		}
 
 		@Bean

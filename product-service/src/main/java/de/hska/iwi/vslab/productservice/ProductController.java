@@ -3,8 +3,6 @@ package de.hska.iwi.vslab.productservice;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.annotation.security.RolesAllowed;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +14,6 @@ public class ProductController {
     private ProductRepository productRepository;
 
     @RequestMapping(value = "/products", method = RequestMethod.GET)
-    @RolesAllowed({"ROLE_ADMIN"})
     public Iterable<Product> getAllProducts(@RequestParam(defaultValue = "", required = false) String description,
             @RequestParam(required = false) Double minPrice, @RequestParam(required = false) Double maxPrice) {
         minPrice = minPrice == null ? Double.MIN_VALUE : minPrice;

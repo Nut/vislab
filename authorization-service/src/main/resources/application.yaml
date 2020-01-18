@@ -1,6 +1,13 @@
 spring:
   application:
-      name: authorization-service
+    name: authorization-service
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:mysql://user-db:3306/users?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+    username: usersUser
+    password: supersecret
 
 eureka:
   client:
