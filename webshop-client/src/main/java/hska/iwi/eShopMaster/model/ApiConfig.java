@@ -15,4 +15,6 @@ public class ApiConfig {
     public static final String USER_API_USERS = BASE_URL_USER_API + "/users";
 
     public static final String ACCESS_TOKEN_URI = BASE_URL + "/auth/oauth/token";
+
+    public static final String AUTH_ME_URI = BASE_URL + "/auth/me";
 }

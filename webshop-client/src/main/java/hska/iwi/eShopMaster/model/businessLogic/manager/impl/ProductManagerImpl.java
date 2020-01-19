@@ -1,5 +1,7 @@
 package hska.iwi.eShopMaster.model.businessLogic.manager.impl;
 
+import hska.iwi.eShopMaster.model.BeanUtil;
+import hska.iwi.eShopMaster.model.OAuth2ClientConfig;
 import hska.iwi.eShopMaster.model.businessLogic.manager.CategoryManager;
 import hska.iwi.eShopMaster.model.businessLogic.manager.ProductManager;
 import hska.iwi.eShopMaster.model.database.LoggingRequestInterceptor;
@@ -15,23 +17,27 @@ import java.util.List;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import static hska.iwi.eShopMaster.model.ApiConfig.API_PRODUCTS;;
 
 public class ProductManagerImpl implements ProductManager {
-	private RestTemplate restTemplate = new RestTemplate(
-			new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+
+	private OAuth2RestTemplate oAuthRestTemplate;
 
 	public ProductManagerImpl() {
 		List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
 		interceptors.add(new LoggingRequestInterceptor());
-		restTemplate.setInterceptors(interceptors);
+
+		this.oAuthRestTemplate = BeanUtil.getBean(OAuth2ClientConfig.class).oAuthRestTemplate();
+		oAuthRestTemplate
+				.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+		oAuthRestTemplate.setInterceptors(interceptors);
 	}
 
 	public List<Product> getProducts() {
-		Product[] products = restTemplate.getForObject(API_PRODUCTS, Product[].class);
+		Product[] products = oAuthRestTemplate.getForObject(API_PRODUCTS, Product[].class);
 		List<Product> targetList = new ArrayList<Product>(Arrays.asList(products));
 		return targetList;
 	}
@@ -45,13 +51,13 @@ public class ProductManagerImpl implements ProductManager {
 				.build() // Build the URL
 				.encode() // Encode any URI items that need to be encoded
 				.toUri();
-		Product[] products = restTemplate.getForObject(targetUrl, Product[].class);
+		Product[] products = oAuthRestTemplate.getForObject(targetUrl, Product[].class);
 		List<Product> targetList = new ArrayList<Product>(Arrays.asList(products));
 		return targetList;
 	}
 
 	public Product getProductById(int id) {
-		return restTemplate.getForObject(API_PRODUCTS + "/{id}", Product.class, id);
+		return oAuthRestTemplate.getForObject(API_PRODUCTS + "/{id}", Product.class, id);
 	}
 
 	public Product getProductByName(String name) {
@@ -72,7 +78,7 @@ public class ProductManagerImpl implements ProductManager {
 				product = new NewProduct(name, price, categoryId, details);
 			}
 
-			Product returnedProduct = restTemplate.postForObject(API_PRODUCTS, product, Product.class);
+			Product returnedProduct = oAuthRestTemplate.postForObject(API_PRODUCTS, product, Product.class);
 			productId = returnedProduct.getId();
 		}
 
@@ -80,7 +86,7 @@ public class ProductManagerImpl implements ProductManager {
 	}
 
 	public void deleteProductById(int id) {
-		restTemplate.delete(API_PRODUCTS + "/{id}", id);
+		oAuthRestTemplate.delete(API_PRODUCTS + "/{id}", id);
 	}
 
 	public boolean deleteProductsByCategoryId(int categoryId) {
