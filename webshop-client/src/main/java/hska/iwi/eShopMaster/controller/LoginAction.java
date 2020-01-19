@@ -45,12 +45,7 @@ public class LoginAction extends ActionSupport {
 		// Return string:
 		String result = "input";
 
-		UserManager myCManager = new UserManagerImpl();
-
 		OAuth2AccessToken accessToken;
-
-		// Get user from DB:
-		// User user = myCManager.getUserByUsername(getUsername());
 
 		// Does user exist?
 		try {
@@ -67,7 +62,7 @@ public class LoginAction extends ActionSupport {
 
 		UserAuthDetails userAuthDetails = loadUserAuthDetails(accessToken);
 		LOGGER.info("Received UserAuthDetails: " + userAuthDetails);
-		
+
 		User user = userAuthDetails.getPrincipal();
 
 		// Get session to save user role and login:
@@ -82,28 +77,6 @@ public class LoginAction extends ActionSupport {
 		lastname = user.getLastname();
 		role = user.getRole().getTyp();
 		return "success";
-
-		// if (user != null) {
-		// // Is the password correct?
-		// if (user.getPassword().equals(getPassword())) {
-		// // Get session to save user role and login:
-		// Map<String, Object> session = ActionContext.getContext().getSession();
-
-		// // Save user object in session:
-		// session.put("webshop_user", user);
-		// session.put("message", "");
-		// firstname = user.getFirstname();
-		// lastname = user.getLastname();
-		// role = user.getRole().getTyp();
-		// result = "success";
-		// } else {
-		// addActionError(getText("error.password.wrong"));
-		// }
-		// } else {
-		// addActionError(getText("error.username.wrong"));
-		// }
-
-		// return result;
 	}
 
 	private OAuth2AccessToken loadAccessToken() {
